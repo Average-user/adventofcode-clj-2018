@@ -4,9 +4,10 @@
             [adventofcode-clj-2018.day02]
             [adventofcode-clj-2018.day03]
             [adventofcode-clj-2018.day04]
-            [adventofcode-clj-2018.day05]))
+            [adventofcode-clj-2018.day05]
+            [adventofcode-clj-2018.day06]))
 
-(def completed (range 1 6))
+(def completed (range 1 7))
 
 (defn my-format [x]
   (str x (apply str (take (- 25 (count (str x))) (repeat " "))) " |"))
