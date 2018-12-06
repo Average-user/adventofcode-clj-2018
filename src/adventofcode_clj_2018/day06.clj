@@ -6,49 +6,49 @@
   (->> 6 u/input cs/split-lines (map #(mapv u/parse-int (cs/split % #",")))))
 
 (defn mdistance [[a b] [c d]]
-  (+ (Math/abs (- a c)) (Math/abs (- b d))))
+  (+ (Math/abs ^long (- a c)) (Math/abs ^long (- b d))))
 
 (defn closest-point [p points]
-  (let [x (->> points
-               (map #(vector % (mdistance p %)))
-               (sort-by second)
-               (partition-by second)
-               (first)
-               (map first))]
-    (when (= (count x) 1)
-      (first x))))
+  (let [[[p1 d1] [p2 d2]]
+        (->> points
+             (map #(vector % (mdistance p %)))
+             (sort-by second)
+             (take 2))]
+    (when-not (= d1 d2) p1)))
 
 (defn margin [minx maxx miny maxy]
- (set (concat (map vector (repeat minx) (range (inc maxy)))
-              (map vector (range (inc maxx)) (repeat miny))
-              (map vector (repeat maxx) (range (inc maxy)))
-              (map vector (range (inc maxx)) (repeat maxy)))))
+  (set (concat (map vector (repeat minx) (range (inc maxy)))
+               (map vector (range (inc maxx)) (repeat miny))
+               (map vector (repeat maxx) (range (inc maxy)))
+               (map vector (range (inc maxx)) (repeat maxy)))))
 
 (defn infinite-areas [points margin]
-  (set (map #(closest-point % points) margin)))
+  (map #(first (sort-by (partial mdistance %) points)) margin))
+
+(defn boundaries [points]
+  (let [[xs ys] [(map first points) (map second points)]]
+    [(reduce min xs) (reduce max xs) (reduce min ys) (reduce max ys)]))
 
 (defn part-1 []
-  (let [input       (parse-input)
-        [minx maxx] ((juxt #(reduce min %) #(reduce max %)) (map first input))
-        [miny maxy] ((juxt #(reduce min %) #(reduce max %)) (map second input))
-        infareas    (infinite-areas input (margin minx maxx miny maxy))
-        ps]
-    (->> (for [x (range minx (inc maxx)) y (range miny (inc maxy))]
-           (let [c (closest-point [x y] input)]
-             (when (and c (not (contains? infareas c)))
-               c)))
-         (filter identity)
-         (sort)
-         (partition-by identity)
-         (map count)
+  (let [points (parse-input)
+        [minx maxx miny maxy] (boundaries points)
+        infareas (infinite-areas points (margin minx maxx miny maxy))
+        coords   (for [x     (range minx (inc maxx))
+                       y     (range miny (inc maxy))
+                       :let  [c (closest-point [x y] points)]
+                       :when c]
+                   c)]
+    (->> infareas
+         (reduce dissoc (frequencies coords))
+         (map second)
          (reduce max))))
-
+   
 (defn part-2 []
-  (let [input       (parse-input)
-        [minx maxx] ((juxt #(reduce min %) #(reduce max %)) (map first input))
-        [miny maxy] ((juxt #(reduce min %) #(reduce max %)) (map second input))
-        total       #(reduce + (map (partial mdistance %) input))]
-    (->> (for [x (range minx (inc maxx)) y (range miny (inc maxy))]
-           (total [x y]))
-         (filter #(< % 10000))
-         (count))))
+  (let [points (parse-input)
+        [minx maxx miny maxy] (boundaries points)
+        total #(reduce + (map (partial mdistance %) points))]
+    (count (for [x     (range minx (inc maxx))
+                 y     (range miny (inc maxy))
+                 :let  [t (total [x y])]
+                 :when (< t 10000)] t))))
+
