@@ -16,14 +16,14 @@
              (take 2))]
     (when-not (= d1 d2) p1)))
 
-(defn margin [minx maxx miny maxy]
-  (set (concat (map vector (repeat minx) (range (inc maxy)))
-               (map vector (range (inc maxx)) (repeat miny))
-               (map vector (repeat maxx) (range (inc maxy)))
-               (map vector (range (inc maxx)) (repeat maxy)))))
-
-(defn infinite-areas [points margin]
-  (map #(first (sort-by (partial mdistance %) points)) margin))
+(defn infinite-areas [points minx maxx miny maxy]
+    (->> (concat
+          (for [x (range (inc maxx))] [x 0])
+          (for [y (range (inc maxy))] [0 y])
+          (for [x (range (inc maxx))] [x maxy])
+          (for [y (range (inc maxy))] [maxx y]))
+         (map #(first (sort-by (partial mdistance %) points)))
+         (set)))
 
 (defn boundaries [points]
   (let [[xs ys] [(map first points) (map second points)]]
@@ -32,12 +32,12 @@
 (defn part-1 []
   (let [points (parse-input)
         [minx maxx miny maxy] (boundaries points)
-        infareas (infinite-areas points (margin minx maxx miny maxy))
-        coords   (for [x     (range minx (inc maxx))
-                       y     (range miny (inc maxy))
-                       :let  [c (closest-point [x y] points)]
-                       :when c]
-                   c)]
+        infareas (infinite-areas points minx maxx miny maxy)
+        coords (for [x     (range minx (inc maxx))
+                     y     (range miny (inc maxy))
+                     :let  [c (closest-point [x y] points)]
+                     :when c]
+                 c)]
     (->> infareas
          (reduce dissoc (frequencies coords))
          (map second)
