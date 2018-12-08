@@ -1,8 +1,6 @@
 (ns adventofcode-clj-2018.day07
   (:require [adventofcode-clj-2018.util :as u]
-            [clojure.string :as cs]
-            [clojure.core.match :as m]
-            [clojure.set :as s]))
+            [clojure.string :as cs]))
 
 (defn parse-input []
   (letfn [(parse-line-words [ws] [(second ws) (nth ws 7)])]
@@ -28,45 +26,38 @@
 (defn dec* [x] (if (<= x 0) 0 (dec x)))
 
 (defn add-letter [letter workers]
-  (loop [ws workers, acc []]
-    (m/match (first ws)
-             [i 0 nil]  (reduce conj acc (cons [i (letter-time letter) letter] (rest ws)))
-             nil        acc
-             _          (recur (rest ws) (conj acc (first ws))))))
+  (cons [(letter-time letter) letter]
+        (rest (sort-by second workers))))
 
 (defn add-letters [letters workers]
   (let [nils (count (filter (complement peek) workers))]
     (reduce #(add-letter %2 %1) workers (take nils (sort letters)))))
 
 (defn remove-letter [letter workers]
-  (let [[i _ _] (first (filter #(= letter (peek %)) workers))]
-    (conj (filterv #(not= letter (peek %)) workers)
-          [i 0 nil])))
+  (conj (filterv #(not= letter (peek %)) workers)
+        [0 nil]))
 
 (defn calculate-time [ps letters]
   (loop [fins    #{}
-         workers (mapv vector (range 5) (repeat 0) (repeat nil))
+         workers (mapv vector (take 5 (repeat 0)) (repeat nil))
          acc     []]
-    (let  [dependent (fn [l] (map first (filter #(= (second %) l) ps)))
-           options   (sort (filter (fn [l] (->> l dependent (every? fins))) 
-                                   (filter (comp not fins) letters)))
-           finished  (set (keep (fn [[_ s l]] (when (and l (= 1 s)) l)) workers))
-           working   (set (keep peek workers))
-           nops      (filter (complement working) options)
-           nws       (map (fn [[w s l]] [w (dec* s) l]) workers)
-           nws'      (reduce #(remove-letter %2 %1) nws finished)
-           ffins     (s/union fins finished)]
+    (let [workers'  (map (fn [[s l]] [(dec* s) l]) workers)
+          finished  (map second (filter (fn [[s l]] (and l (= 0 s))) workers'))
+          fins'     (reduce conj fins finished)
+          dependent (fn [l] (map first (filter #(= (second %) l) ps)))
+          options   (sort (filter (fn [l] (->> l dependent (every? fins'))) 
+                                  (filter (comp not fins') letters)))
+          reduced   (reduce #(remove-letter %2 %1) workers' finished)
+          working   (set (keep peek workers))
+          options'  (filter (complement working) options)
+          additions (add-letters options' reduced)]
       (if (empty? options)
         acc
-        (let [nws'' (add-letters nops nws')]
-          (recur ffins nws'' (conj acc workers)))))))
-           
+        (recur fins' additions (conj acc additions))))))
+         
 (defn part-2 []
   (let [input   (parse-input)
         letters (set (apply concat input))]
     (->> (calculate-time input letters)
          (filter (partial some peek))
-         (count)
-         (- 5)
-         (Math/abs))))
-    
+         (count))))
