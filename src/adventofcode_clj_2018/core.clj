@@ -9,6 +9,8 @@
             [adventofcode-clj-2018.day07]
             [adventofcode-clj-2018.day08]
             [adventofcode-clj-2018.day09]))
+;; Not adding day10 because of the weird output.
+;; Nevertheless tests do include it
 
 (def completed (range 1 10))
 
