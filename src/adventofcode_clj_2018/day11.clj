@@ -1,5 +1,6 @@
 (ns adventofcode-clj-2018.day11
-  (:require [adventofcode-clj-2018.util :as u]))
+  (:require [adventofcode-clj-2018.util :as u]
+            [clojure.string :as cs]))
 
 (defn parse-input []
   (-> (u/input 11) cs/trim read-string))
