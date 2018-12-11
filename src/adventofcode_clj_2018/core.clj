@@ -8,11 +8,12 @@
             [adventofcode-clj-2018.day06]
             [adventofcode-clj-2018.day07]
             [adventofcode-clj-2018.day08]
-            [adventofcode-clj-2018.day09]))
+            [adventofcode-clj-2018.day09]
 ;; Not adding day10 because of the weird output.
 ;; Nevertheless tests do include it
+            [adventofcode-clj-2018.day11]))
 
-(def completed (range 1 10))
+(def completed [1 2 3 4 5 6 7 8 9 11])
 
 (defn my-format [x]
   (str x (apply str (take (- 26 (count (str x))) (repeat " "))) " |"))
