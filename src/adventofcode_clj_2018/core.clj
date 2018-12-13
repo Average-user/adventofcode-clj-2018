@@ -11,7 +11,8 @@
             [adventofcode-clj-2018.day09]
 ;; Not adding day10 because of the weird output.
 ;; Nevertheless tests do include it
-            [adventofcode-clj-2018.day11]))
+            [adventofcode-clj-2018.day11]
+            [adventofcode-clj-2018.day12]))
 
 (def completed [1 2 3 4 5 6 7 8 9 11])
 
