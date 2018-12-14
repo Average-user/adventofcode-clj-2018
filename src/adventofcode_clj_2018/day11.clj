@@ -9,26 +9,46 @@
   (let [id (+ x 10)]
     (- (rem (quot (* id (+ serial (* y id))) 100) 10) 5)))
 
-(defn in? [[x y] [[x1 y1] [x2 y2]]]
-  (and (<= x1 x x2) (<= y1 y y2)))
+(defn summed-area-table [coord->val]
+  (reduce (fn [sums [x y]]
+            (assoc sums
+                      [x y]
+                      (+ (coord->val [x y])
+                         (get sums [(dec x) y] 0)
+                         (get sums [x (dec y)] 0)
+                         (- (get sums [(dec x) (dec y)] 0)))))
+          {}
+          (for [y (range 300),  x (range 300)] [x y])))
 
-(defn squares [f g [x y]]
-  (letfn [(square [[x y] size]
-            (reduce + (for [x' (range x (+ x size)) y' (range y (+ y size))]
-                        (f [x' y']))))]
-    (map (fn [s] [s [x y] (square [x y] s)])
-         (g (range 1 (- 301 (max x y)))))))
+(defn square-sum [sums [[x y] size]]
+  (let [i (dec size)]
+    (+ (get sums [(+ x i) (+ y i)])
+       (get sums [(dec x) (dec y)] 0)
+       (- (get sums [(+ x i) (dec y)] 0))
+       (- (get sums [(dec x) (+ y i)] 0)))))
 
-(defn scored-squares [serial f]
-  (->> (for [x (range 1 301), y (range 1 301)] [x y])
-       (mapcat (fn [coord] (squares #(power-cell % serial) f coord)))
-       (reduce (fn [[s1 x1 p1] [s2 x2 p2]] (if (> p1 p2) [s1 x1 p1] [s2 x2 p2])))))
+(defn squares-by-size [s]
+  (for [x (range (- 300 s)), y (range (- 300 s))]
+    [[x y] s]))
 
 (defn part-1 []
-  (->> (scored-squares (parse-input) #(filter (partial = 3) %))
-       (second)
-       (cs/join ",")))
+  (let [serial (parse-input)
+        sums   (summed-area-table #(power-cell % serial))]
+    (->> (squares-by-size 3)
+         (map (juxt identity (partial square-sum sums)))
+         (reduce (fn [[c1 s1] [c2 s2]] (if (> s1 s2) [c1 s1] [c2 s2])))
+         (pop)
+         (flatten)
+         (butlast)
+         (cs/join ","))))
 
 (defn part-2 []
-  (let [[s [x y]] (scored-squares (parse-input) #(filter (partial > 15) %))]
-    (cs/join "," [x y s])))
+  (let [serial (parse-input)
+        sums   (summed-area-table #(power-cell % serial))]
+    (->> (range 1 301)
+         (mapcat squares-by-size)
+         (map (juxt identity (partial square-sum sums)))
+         (reduce (fn [[c1 s1] [c2 s2]] (if (> s1 s2) [c1 s1] [c2 s2])))
+         (pop)
+         (flatten)
+         (cs/join ","))))
