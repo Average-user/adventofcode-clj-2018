@@ -9,3 +9,5 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
+/resources/day15.txt
+/src/adventofcode_clj_2018/day15.clj
