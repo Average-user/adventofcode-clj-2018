@@ -13,9 +13,10 @@
 ;; Nevertheless tests do include it
             [adventofcode-clj-2018.day11]
             [adventofcode-clj-2018.day12]
-            [adventofcode-clj-2018.day13]))
+            [adventofcode-clj-2018.day13]
+            [adventofcode-clj-2018.day14]))
 
-(def completed [1 2 3 4 5 6 7 8 9   11 12 13])
+(def completed [1 2 3 4 5 6 7 8 9   11 12 13 14])
 
 (defn my-format [x]
   (str x (apply str (take (- 26 (count (str x))) (repeat " "))) " |"))

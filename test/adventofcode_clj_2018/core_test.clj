@@ -12,7 +12,8 @@
             [adventofcode-clj-2018.day10 :as day10]
             [adventofcode-clj-2018.day11 :as day11]
             [adventofcode-clj-2018.day12 :as day12]
-            [adventofcode-clj-2018.day13 :as day13]))
+            [adventofcode-clj-2018.day13 :as day13]
+            [adventofcode-clj-2018.day14 :as day14]))
 
 (deftest day01-part-1 (is (= (day01/part-1) 484)))
 (deftest day01-part-2 (is (= (day01/part-2) 367)))
@@ -61,3 +62,6 @@
 
 (deftest day13-part-1 (is (= (day13/part-1) "5,102")))
 (deftest day13-part-2 (is (= (day13/part-2) "46,45")))
+
+(deftest day14-part-1 (is (= (day14/part-1) 1115317115)))
+(deftest day14-part-2 (is (= (day14/part-2) 20229822)))
