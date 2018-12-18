@@ -14,7 +14,9 @@
             [adventofcode-clj-2018.day12 :as day12]
             [adventofcode-clj-2018.day13 :as day13]
             [adventofcode-clj-2018.day14 :as day14]
-            [adventofcode-clj-2018.day16 :as day16]))
+            [adventofcode-clj-2018.day16 :as day16]
+; solution to day 17 is too slow for now
+            [adventofcode-clj-2018.day18 :as day18]))
 
 (deftest day01-part-1 (is (= (day01/part-1) 484)))
 (deftest day01-part-2 (is (= (day01/part-2) 367)))
@@ -69,3 +71,9 @@
 
 (deftest day16-part-1 (is (= (day16/part-1) 640)))
 (deftest day16-part-2 (is (= (day16/part-2) 472)))
+
+;; (deftest day17-part-1 (is (= (day17/part-1) 42389)))
+;; (deftest day17-part-2 (is (= (day17/part-2) 34497)))
+
+(deftest day18-part-1 (is (= (day18/part-1) 519552)))
+(deftest day18-part-2 (is (= (day18/part-2) 165376)))
