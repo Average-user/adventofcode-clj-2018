@@ -17,9 +17,10 @@
             [adventofcode-clj-2018.day14]
             [adventofcode-clj-2018.day16]
 ;; Solution to day 17 is too slow for now
-            [adventofcode-clj-2018.day18]))
+            [adventofcode-clj-2018.day18]
+            [adventofcode-clj-2018.day19]))
 
-(def completed [1 2 3 4 5 6 7 8 9   11 12 13 14   16   18])
+(def completed [1 2 3 4 5 6 7 8 9   11 12 13 14   16   18   19])
 
 (defn my-format [x]
   (str x (apply str (take (- 26 (count (str x))) (repeat " "))) " |"))
